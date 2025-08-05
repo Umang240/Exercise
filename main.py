@@ -16,19 +16,20 @@ from fastapi.templating import Jinja2Templates
 
 app = FastAPI() 
 
+# basic route
 def read_root():
     return HTMLResponse("<h1>Hello, World!</h1> <p>Welcome to FastAPI!</p>")
 
 app.get("/", response_class=HTMLResponse)(read_root)   
 
 
-
+# basic route fetching id from params
 @app.get("/items/{item_id}")
 def read_item(item_id: int):
     return {"item_id": item_id, "message": "You requested this item."}
 
 
-
+#  model for item
 class Item(BaseModel):
     name : str
     price : float
@@ -37,12 +38,14 @@ class Item(BaseModel):
 def create_item(item: Item):
     return {"name": item.name, "price": item.price, "message": "Item created successfully."}
 
+# route for fetching query from url
 @app.get("/search/")
 def search_items(q: str = None):
     if q:
         return {"message": f"Searching for {q}"}
     return {"message": "No search query provided."}
 
+# home route
 @app.get("/home/")
 def home():
     return HTMLResponse("<h1>Welcome to the home page!</h1> <p>Enjoy your stay.</p>")
@@ -61,7 +64,7 @@ class Product(BaseModel):
     price: int 
     in_stock: bool = Field(..., example=True)
 
-
+# product route
 @app.post("/products/", status_code=status.HTTP_201_CREATED)
 def create_product(product: Product):
     print(product)
@@ -81,15 +84,18 @@ def create_product(product: Product):
 
 
 templates = Jinja2Templates(directory="templates")
-
+# renders index.html for show route
 @app.get("/show/")
 def show_page(request: Request):
     return templates.TemplateResponse("index.html", {"request": request, "data": "Hello from FastAPI!"})
 
+# renders login.html for login route
 @app.get("/login/")
 def login_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request, "message": "Please log in" })
 
+
+# sends user's data to show route
 @app.post("/login/")
 async def login(request: Request):
     form_data = await request.form()
