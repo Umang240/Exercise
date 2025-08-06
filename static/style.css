@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color:blanchedalmond !important;
+    text-align: center;
+    padding: 50px;
+}
+
+h1 {
+    color: #333;
+}
+
+.mb-3{
+    margin-left: 20rem;
+}
+
+.card-body{
+    margin: 5px;
+    object-fit:cover;
+}
+
+.card{
+    margin: 5px;
+}

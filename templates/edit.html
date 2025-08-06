@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Task - TaskVault</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+     integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Edit Task</h1>
+
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/edit-task{{ task.id }}" method="post">
+            <div class="mb-3 col-lg-6">
+                <label for="taskname" class="form-label">Task Name</label>
+                <input type="text" class="form-control" id="taskname" name="taskname" value="{{ task.taskname }}" required>
+            </div>
+
+            <div class="mb-3 col-lg-6">
+                <label for="taskdescription" class="form-label">Task Description</label>
+                <textarea class="form-control" id="taskdescription" name="description" rows="3" required>{{ task.description }}</textarea>
+            </div>
+
+            <div class="mb-3 col-lg-6">
+                <label for="duedate" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="duedate" name="duedate" value="{{ task.duedate }}" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update Task</button>
+        </form>
+    </div>
+</body>
+</html>
