@@ -21,6 +21,7 @@ class Task(BaseModel):
     description: str = Field(..., example="Description of Task 1")
     duedate: str = Field(..., example="2023-10-01")
 
+# Sample tasks for app
 tasks = [
      {
         "id": str(uuid.uuid4()),
@@ -80,8 +81,6 @@ async def get_tasks(request: Request):
 @app.get("/new-task")
 async def new_task(request: Request):
     return templates.TemplateResponse("new.html", {"request": request})
-
-
 
 
 # new task creation route
