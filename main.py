@@ -2,7 +2,7 @@
 # This code sets up a FastAPI application with static file serving and template rendering.
 
 from fastapi import FastAPI, Request, Form 
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse,JSONResponse
 from fastapi import APIRouter
 from pydantic import BaseModel, Field 
 from fastapi import status
@@ -82,8 +82,6 @@ async def new_task(request: Request):
     return templates.TemplateResponse("new.html", {"request": request})
 
 
-
-
 # new task creation route
 @app.post("/new_task")
 async def create_task(request: Request):
@@ -120,28 +118,63 @@ async def edit_task_form(request: Request, task_id: str):
     return templates.TemplateResponse("edit.html", {"request": request, "task": task})
 
 # post edit details to task route 
-@app.post("/edit-task/{task_id}",)
+# @app.post("/edit-task",)
+# async def edit_task(request: Request):
+#     form_data = await request.form()
+#     taskname = form_data.get("taskname")
+#     description = form_data.get("description")
+#     duedate = form_data.get("duedate")
+
+#     if not taskname or not description or not duedate:
+#         return templates.TemplateResponse("edit.html", {
+#             "request": request,
+#             "error": "All fields are required"
+#         })
+    
+    
+#     for task in tasks:
+#         if task["id"] == task_id:
+#             task["taskname"] = taskname
+#             task["description"] = description
+#             task["duedate"] = duedate
+#             break
+#         else:
+#             return HTMLResponse( content="Sorry! Task with given id not found", status_code=404)
+
+#     return templates.TemplateResponse("task.html",{
+#         "request": request,
+#         "tasks": tasks
+#     })
+
+@app.put("/edit-task/{task_id}")
 async def edit_task(request: Request, task_id: str):
-    form_data = await request.form()
-    taskname = form_data.get("taskanme")
-    description = form_data.get("description")
-    duedate = form_data.get("duedate")
+    data = await request.json()  
+
+    taskname = data.get("taskname")
+    description = data.get("description")
+    duedate = data.get("duedate")
 
     if not taskname or not description or not duedate:
-        return templates.TemplateResponse("edit.html", {
-            "request": request,
-            "error": "All fields are required"
-        })
-    
-    task = Task(
-        taskanme=taskname,
-        description=description,
-        duedate=duedate
-    )
+        return HTMLResponse(content="All fields are required", status_code=400)
 
-    tasks.append(task)
+    for task in tasks:
+        if task["id"] == task_id:
+            task["taskname"] = taskname
+            task["description"] = description
+            task["duedate"] = duedate
+            break
+    else:
+        return HTMLResponse(content="Task not found", status_code=404)
 
-    return templates.TemplateResponse("task.html",{
-        "request": request,
-        "tasks": task
-    })
+    return HTMLResponse(content="Task updated", status_code=200)
+
+# Task deletion route
+@app.delete("/delete/{task_id}")
+async def delete_task(task_id: str):
+     task = next((t for t in tasks if t["id"] == task_id), None)
+
+     if not task:
+        return JSONResponse( content={"error": "Tasknot found"}, status_code=404)
+     
+     tasks.remove(task)
+     return JSONResponse(content={"message": "Task deleted successfully"}, status_code=200)

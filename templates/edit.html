@@ -19,7 +19,7 @@
         </div>
         {% endif %}
 
-        <form action="/edit-task{{ task.id }}" method="post">
+        <form id="edit-form">
             <div class="mb-3 col-lg-6">
                 <label for="taskname" class="form-label">Task Name</label>
                 <input type="text" class="form-control" id="taskname" name="taskname" value="{{ task.taskname }}" required>
@@ -35,8 +35,30 @@
                 <input type="date" class="form-control" id="duedate" name="duedate" value="{{ task.duedate }}" required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Update Task</button>
+            <button type="button" class="btn btn-primary" onclick="submitEdit('{{ task.id }}')">Update Task</button>
         </form>
+
+        <script>
+        function submitEdit(taskId) {
+            const form = document.getElementById("edit-form");
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+
+            fetch(`/edit-task/${taskId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            }).then(res => {
+                if (res.ok) {
+                    alert("Task updated!");
+                    window.location.href = "/tasks";
+                } else {
+                    alert("Update failed.");
+                }
+            });
+        }
+        </script>
+
     </div>
 </body>
 </html>
