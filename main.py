@@ -21,6 +21,7 @@ class Task(BaseModel):
     description: str = Field(..., example="Description of Task 1")
     duedate: str = Field(..., example="2023-10-01")
 
+# Sample tasks for app
 tasks = [
      {
         "id": str(uuid.uuid4()),
@@ -166,15 +167,7 @@ async def edit_task(request: Request, task_id: str):
     else:
         return HTMLResponse(content="Task not found", status_code=404)
 
-    return HTMLResponse(content="Task updated", status_code=200)
-
-# Task deletion route
-@app.delete("/delete/{task_id}")
-async def delete_task(task_id: str):
-     task = next((t for t in tasks if t["id"] == task_id), None)
-
-     if not task:
-        return JSONResponse( content={"error": "Tasknot found"}, status_code=404)
-     
-     tasks.remove(task)
-     return JSONResponse(content={"message": "Task deleted successfully"}, status_code=200)
+    return templates.TemplateResponse("task.html",{
+        "request": request,
+        "tasks": task
+    })
